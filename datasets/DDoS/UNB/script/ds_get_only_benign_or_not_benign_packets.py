@@ -8,17 +8,19 @@
 #        Script to clean datasets             #
 #                                             #
 #  Print only the asked rows (benign or not)  #
+#     Select by pressing 1 for benign and     #
+#        2 for not benign at the start        #
 #                                             #
 ###############################################
 
 import sys
 
 #Choose your file
-fichier = open("./the_file.csv", "r")
+fichier = open("your_file", "r")
 
 wanted = 0
 while (wanted != '1\n' and wanted != '2\n'):
-    print("Press 1 to get only benigns packets and 2 to get DS whithout banigns packets\n\tYour choice: ", end="")
+   #Press 1 to get only benigns packets and 2 to get DS whithout benigns packets
     wanted = sys.stdin.readline()
 
 
