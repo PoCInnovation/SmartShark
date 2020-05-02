@@ -1,5 +1,4 @@
 ###############################################
-
 #                                             #
 #              PoC: Smartshark                #
 #                                             #
@@ -16,7 +15,7 @@
 import sys
 
 #Choose your file
-fichier = open("your_file", "r")
+fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/Portmap.csv", "r")
 
 wanted = 0
 while (wanted != '1\n' and wanted != '2\n'):
