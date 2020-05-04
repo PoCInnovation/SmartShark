@@ -1,10 +1,22 @@
-"""
-WARNING: Label must be always a the end of the dataset !
-"""
-fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/ds/pre_ds.csv", "r")
-keep_label = True # laisser en True, need to be fixed
+###############################################
+#                                             #
+#              PoC: Smartshark                #
+#                                             #
+#                  USAGE:                     #
+#                                             #
+#        Script to create the dataset         #
+#                                             #
+#   Use top variables to custom the script    #
+#        It will print the dataset            #
+#                                             #
+#   WARNING: label must be always at the end  #
+# ISSUE:get_val_without_label has to be fixed #
+#                                             #
+###############################################
+
+fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/ds/not_benign.csv", "r")
+keep_label = True # let the True value, need to be fixed
 nb_of_packet_use_for_each = 11
-result_file = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/ds/result/result.csv", "w")
 
 tmp = 0
 index = 0
@@ -244,5 +256,5 @@ for line in fichier:
             index += 1
             if (keep_label == False):
                 result = get_val_without_label(result)
-            result_file.write(str(get_result(result, pos)) + "\n");
+            print(get_result(result, pos))
             result = ""
