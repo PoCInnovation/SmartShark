@@ -14,7 +14,7 @@
 #                                             #
 ###############################################
 
-fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/ds/not_benign.csv", "r")
+fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/ds/only_benign.csv", "r")
 keep_label = True # let the True value, need to be fixed
 nb_of_packet_use_for_each = 11
 
@@ -185,7 +185,7 @@ def get_pourc_src_ip(tmp, pos):
         if ans[i] > index:
             index = ans[i]
             result = i
-    return((nb_of_packet_use_for_each / 100) * index)
+    return(index * 100 / nb_of_packet_use_for_each)
 
 def get_pourc_dst_ip(tmp, pos):
     ans = {}
@@ -200,7 +200,7 @@ def get_pourc_dst_ip(tmp, pos):
         if ans[i] > index:
             index = ans[i]
             result = i
-    return((nb_of_packet_use_for_each / 100) * index)
+    return(index * 100 / nb_of_packet_use_for_each)
 
 def get_pourc_src_port(tmp, pos):
     ans = {}
@@ -215,7 +215,7 @@ def get_pourc_src_port(tmp, pos):
         if ans[i] > index:
             index = ans[i]
             result = i
-    return((nb_of_packet_use_for_each / 100) * index)
+    return(index * 100 / nb_of_packet_use_for_each)
 
 def get_pourc_dst_port(tmp, pos):
     ans = {}
@@ -230,14 +230,14 @@ def get_pourc_dst_port(tmp, pos):
         if ans[i] > index:
             index = ans[i]
             result = i
-    return((nb_of_packet_use_for_each / 100) * index)
+    return(index * 100 / nb_of_packet_use_for_each)
 
 def get_result(result, pos):
     the_result = []
     the_result.append(get_delta_time(result, pos["Time"]))
     the_result.append(get_len_fwd(result, pos["Len_fwd"]))
     the_result.append(get_len_bwd(result, pos["Len_bwd"]))
-    the_result.append(get_proto_maj(result, pos["Protocol"]))
+    the_result.append(int(get_proto_maj(result, pos["Protocol"])))
     the_result.append(get_pourc_src_ip(result, pos["Source IP"]))
     the_result.append(get_pourc_src_port(result, pos["Source Port"]))
     the_result.append(get_pourc_dst_ip(result, pos["Destination IP"]))
@@ -256,5 +256,6 @@ for line in fichier:
             index += 1
             if (keep_label == False):
                 result = get_val_without_label(result)
-            print(get_result(result, pos))
+            result = str(get_result(result, pos))
+            print(result[1:len(result) - 1])
             result = ""
