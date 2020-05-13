@@ -1,5 +1,8 @@
 # SmartShark
 
+>## <b>Project</b>
+> The <b>SmartShark</b> an IDS (intrusion detection systeme) with machine learning. It will notify as soon as an anormal conection is made on the network.
+
 >## <b>Logbook</b>
 > This is a small presentation on what progress we made trough time. Each point will represent the outcome of a meeting (wich happen every week).
 >* <b>WEEK 00 (27/03/2020)</b>
@@ -18,3 +21,15 @@
 >   <pre>Thanks to some code and TanserFlow (and all we lurned since the beginng) we finally arrive at a point where our AI is abble to reconize a DDOS attack (in some case scenario) with a good accuracy.</pre>
 >* <b>WEEK 07 (13/05/2020)</b>
 >   <pre></pre>
+
+>## <b>Dataset</b>
+> The dataset is a main part of this project, in deed, it will be thanks to it that our machine leanring will learn. We first used a dataset given by the <a href=https://www.unb.ca/cic/datasets/ddos-2019.html>Univesity Of New Brunswick</a>, this dataset is veryusefull beaceause it has labbeled the network traffic so we can easely make our AI work on it and make a nice model of what an intrusion would look like. This dataset has many information, but we only use some of theme:
+> * SourceIP: to know the source of the IP
+> * SourcePort: to know the source of the Port
+> * DestinationIP: to know the destination of the IP
+> * DestinationPort: to know the destination of the Port
+> * Protocol: to know wich protocol is used
+> * TotalLengthofFwdPackets:
+> * TotalLengthofBwdPackets:
+>
+> Also, we don't watch all of the traffic (it would be a waste of ressources), so we make our own data trough this data, in deed, we take 10 packets from the traffic and extract some data from it.
