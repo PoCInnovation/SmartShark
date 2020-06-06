@@ -14,9 +14,9 @@
 #                                             #
 ###############################################
 
-fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/ds/only_benign.csv", "r")
+fichier = open("/run/media/Thytu/TOSHIBA EXT/PoC/Smartshark/DS/flow_1_cleared.csv", "r")
 keep_label = True # let the True value, need to be fixed
-nb_of_packet_use_for_each = 11
+nb_of_packet_use_for_each = 5
 
 tmp = 0
 index = 0

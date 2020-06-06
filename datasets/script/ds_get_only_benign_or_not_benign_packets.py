@@ -15,7 +15,7 @@
 import sys
 
 #Choose your file
-fichier = open("/run/media/Thytu/VDA/SmartShark/Datasets/DDoS/Portmap.csv", "r")
+fichier = open("/run/media/Thytu/PoC/SmartShark/Datasets/ddos-datasets/ddos_imbalanced/benign.csv", "r")
 
 wanted = 0
 while (wanted != '1\n' and wanted != '2\n'):
@@ -27,6 +27,8 @@ def is_a_benign_packet(line):
     if (len(line) >= len('benign\n') and line[len(line) - 1] == '\n' and line[len(line) - 2] == 'N' and line[len(line) - 3] == 'G' and line[len(line) - 4] == 'I' and line[len(line) - 5] == 'N' and line[len(line) - 6] == 'E' and line[len(line) - 7] == 'B'):
         return True
     elif (len(line) >= len('benign') and line[len(line) - 1] == 'N' and line[len(line) - 2] == 'G' and line[len(line) - 3] == 'I' and line[len(line) - 4] == 'N' and line[len(line) - 5] == 'E' and line[len(line) - 6] == 'B'):
+        return True
+    elif (len(line) >= len('benign') and line[len(line) - 2] == 'n' and line[len(line) - 3] == 'g' and line[len(line) - 4] == 'i' and line[len(line) - 5] == 'n' and line[len(line) - 6] == 'e' and line[len(line) - 7] == 'B'):
         return True
     else:
         return False
