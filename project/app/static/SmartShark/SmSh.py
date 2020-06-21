@@ -9,7 +9,7 @@ import os, signal, time
 def ApplyCommand(Commande: str):
     if not Commande:
         raise Exception("Use a valide and not empty string")
-    Process = Popen(Commande, shell=True, stdout=PIPE, stderr=PIPE)
+    Process = Popen(Commande, shell=True, stdout=PIPE, stderr=PIPE) #n'est jamais kill ?
     stdout, stderr = Process.communicate()
     if (Process.returncode != 0):
         raise Exception(f"Error while using the commande [{Commande}] and returned [{stderr}]")
@@ -63,9 +63,9 @@ class SmSh():
 
                 open(f"{self.Path['PATH_SAVE']}/main.pcap", "w+").close()
                 try:
-                    CapturingProcess = Popen(f"sudo tshark -F pcap -i any -w {self.Path['PATH_SAVE']}main.pcap", shell=True, stdout=PIPE, stderr=PIPE)
+                    CapturingProcess = Popen(f"tshark -F pcap -i any -w {self.Path['PATH_SAVE']}main.pcap", shell=True, stdout=PIPE, stderr=PIPE)
                     time.sleep(3)
-                    while self.Status['PROCESS']:
+                    while self.Status['PROCESS']: #rajouter un sleep ?
                         pass
                     os.kill(CapturingProcess.pid, signal.SIGINT)
                     os.rename(f"{self.Path['PATH_SAVE']}main.pcap", f"{self.Path['PATH_SAVE']}temp.pcap")
@@ -82,7 +82,8 @@ class SmSh():
             if self.Status['PROCESS']:
                 os.chdir(self.Path['PATH_CICFLOW'])
                 try:
-                    ApplyCommand(f"sudo ./cfm {self.Path['PATH_CURRENT'] + self.Path['PATH_SAVE']}temp.pcap {self.Path['PATH_CURRENT'] + self.Path['PATH_SAVE']}")
+                    #ApplyCommand(f"sudo ./cfm {self.Path['PATH_CURRENT'] + self.Path['PATH_SAVE']}temp.pcap {self.Path['PATH_CURRENT'] + self.Path['PATH_SAVE']}")
+                    ApplyCommand(f"tshark -r {self.Path['PATH_SAVE']}main.pcap -T fiels -E separator=, -E quote=d -e frame.len -e frame.time_delta -e ip.proto")
                 except Exception as e:
                     print(e)
                 os.chdir(self.Path['PATH_CURRENT'])
@@ -91,7 +92,8 @@ class SmSh():
 
                 open(f"{self.Path['PATH_SAVE']}clean.csv", "w").close()
                 try:
-                    ApplyCommand(f"sudo python3.7 {self.Path['PATH_PREPROCESS_SCRIPT']}ds_print_cleaned.py > {self.Path['PATH_SAVE']}/clean.csv")
+                    #ApplyCommand(f"sudo python3.7 {self.Path['PATH_PREPROCESS_SCRIPT']}ds_print_cleaned.py > {self.Path['PATH_SAVE']}/clean.csv")
+                    ApplyCommand(f"sudo python3.7 {self.Path['PATH_PREPROCESS_SCRIPT']}ds_preprocess.py > {self.Path['PATH_SAVE']}/clean.csv")
                 except Exception as e:
                     print(e)
                 os.remove(f"{self.Path['PATH_SAVE']}temp.pcap_Flow.csv")
