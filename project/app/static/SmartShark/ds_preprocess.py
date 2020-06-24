@@ -12,58 +12,55 @@
 ###############################################
 
 import statistics as st
+# import numpy as np
 
-fichier = open("app/static/SmartShark/save/temp_2.pcap_Flow.csv", "r")
+result = []
+deltaArray = []
+lenArray = []
 
-result = {
-    "Delta time" : [],
-    "Len" : [],
-    "Proto": [],
-    "Total delta": [],
-    "Total len": [],
-    "Average delta": [],
-    "Average len": [],
-    "Delta std": [],
-    "Len std": []
-}
+class Packet :
+  def __init__(self, line) :
+    self.deltaTime = line[0]
+    self.len = line[1]
+    self.proto = line[2]
 
-def Get_X_value(value_nb, line):
-    index1 = 0
-    index2 = 0
-    for index1, char in enumerate(line):
-        if char == ',' or char == '\n' or char == "\0":
-            break
-    for index2, char in enumerate(line):
-        if (char == ',' or char == '\n' or char == "\0") and index2 > index1:
-            break
-    return float(line[index1 + 1:index2])
+  def reset(self) :
+    self.totalDelta = self.deltaTime
+    self.averageDelta = self.deltaTime
+    self.totalLen = self.len
+    self.averageLen = self.len
+    self.deltaStd = 0.0
+    self.lenStd = 0.0
+
+  def calc(self, previous, index) :
+    self.totalDelta = self.deltaTime + previous.totalDelta
+    self.totalLen = self.len + previous.totalLen
+
+    self.averageDelta = self.totalDelta / index
+    self.averageLen = self.totalLen / index
+    self.deltaStd = st.pstdev(deltaArray)
+    self.lenStd = st.pstdev(lenArray)
+
+  def __repr__(self) :
+    return f'{self.deltaTime} {self.len} {self.proto} {self.totalDelta} {self.totalLen} {self.averageDelta} {self.averageLen} {self.deltaStd} {self.lenStd}'
+
+fichier = open("all_pcap_to_csv_1_000.csv", "r")
 
 for index, line in enumerate(fichier):
-    result["Delta time"].append(Get_X_value(0, line))
-    result["Len"].append(Get_X_value(1, line))
-    result["Proto"].append(Get_X_value(2, line))
-    if index > 0:
-        result["Total delta"].append(result["Total delta"][index - 1] + result["Delta time"][index])
-        result["Total len"].append(result["Total len"][index - 1] + result["Len"][index])
-        result["Average delta"].append(result["Total delta"][index] / index)
-        result["Average len"].append(result["Total len"][index] / index)
-        result["Delta std"].append(st.pstdev(result['Delta time']))
-        result["Len std"].append(st.pstdev(result['Len']))
-    else:
-        result["Total delta"].append(result["Delta time"][0])
-        result["Total len"].append(result["Len"][0])
-        result["Average delta"].append(result["Delta time"][0])
-        result["Average len"].append(result["Len"][0])
-        result["Delta std"].append(0.0)
-        result["Len std"].append(0.0)
+    if len(line) == 0 : break
+    line = [float(nb) if nb != '' else -1 for nb in line.replace('\n', '').split(',')]
 
-for index, dict_name in enumerate(result):
-    if index != 0:
-        print(", " + dict_name, end="")
-    else:
-        print(dict_name, end="")
+    to_insert = Packet(line)
 
-print()
-for i in range(len(result["Len"])):
-    print(f'{result["Total delta"][i]}, {result["Total len"][i]}, {result["Average delta"][i]}, {result["Average len"][i]}, {result["Delta std"][i]}, {result["Len std"][i]}')
-fichier.close()
+    if index % 5 != 0:
+      to_insert.calc(result[index - 1], index)
+
+      deltaArray.append(to_insert.deltaTime)
+      lenArray.append(to_insert.len)
+    else:
+        to_insert.reset()
+        deltaArray = [0.0]
+        lenArray = [0.0]
+
+    result.append(to_insert)
+print(*result, sep='\n')
