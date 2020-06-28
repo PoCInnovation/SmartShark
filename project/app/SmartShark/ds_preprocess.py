@@ -12,6 +12,7 @@
 ###############################################
 
 import statistics as st
+import os
 # import numpy as np
 
 result = []
@@ -44,7 +45,10 @@ class Packet :
   def __repr__(self) :
     return f'{self.deltaTime} {self.len} {self.proto} {self.totalDelta} {self.totalLen} {self.averageDelta} {self.averageLen} {self.deltaStd} {self.lenStd}'
 
-fichier = open("all_pcap_to_csv_1_000.csv", "r")
+if os.stat("./SmartShark/save/first.csv").st_size == 0:
+  exit(0)
+
+fichier = open("./SmartShark/save/first.csv", "r")
 
 for index, line in enumerate(fichier):
     if len(line) == 0 : break
@@ -52,7 +56,7 @@ for index, line in enumerate(fichier):
 
     to_insert = Packet(line)
 
-    if index % 5 != 0:
+    if index % 20 != 0:
       to_insert.calc(result[index - 1], index)
 
       deltaArray.append(to_insert.deltaTime)
@@ -63,4 +67,5 @@ for index, line in enumerate(fichier):
         lenArray = [0.0]
 
     result.append(to_insert)
-print(*result, sep='\n')
+for r in result:
+  print(f"{r.deltaTime}, {r.len}, {r.proto}, {r.totalDelta}, {r.totalLen}, {r.averageDelta}, {r.averageLen}, {r.deltaStd}, {r.lenStd}")

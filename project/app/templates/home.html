@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Creating Real-Time Charts with Flask</title>
+    <title>SmSh</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
 </head>
@@ -18,6 +18,7 @@
         </div>
     </div>
 </div>
+
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 <!--suppress JSUnresolvedLibraryURL -->
@@ -31,27 +32,21 @@
             data: {
                 labels: [],
                 datasets: [{
-                    label: "Random Dataset",
+                    label: "Number of infected packets",
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 0, 0)',
                     data: [],
                     fill: false,
                 },{
-                    label: "Random Dataset 2",
-                    backgroundColor: 'rgb(255, 99, 132)',
+                    label: "Number of packets",
+                    backgroundColor: 'rgb(99, 255, 132)',
                     borderColor: 'rgb(0, 255, 0)',
                     data: [],
                     fill: false,
                 },{
-                    label: "Random Dataset 3",
-                    backgroundColor: 'rgb(255, 99, 132)',
+                    label: "Pourcentage of packets",
+                    backgroundColor: 'rgb(132, 99, 255)',
                     borderColor: 'rgb(0, 0, 255)',
-                    data: [],
-                    fill: false,
-                },{
-                    label: "Random Dataset 4",
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
                     data: [],
                     fill: false,
                 }],
@@ -60,7 +55,7 @@
                 responsive: true,
                 title: {
                     display: true,
-                    text: 'Creating Real-Time Charts with Flask'
+                    text: 'Evolution of packets on the Network'
                 },
                 tooltips: {
                     mode: 'index',
@@ -99,12 +94,18 @@
             if (config.data.labels.length === 20) {
                 config.data.labels.shift();
                 config.data.datasets[0].data.shift();
+                config.data.datasets[1].data.shift();
+                config.data.datasets[2].data.shift();
             }
             config.data.labels.push(data.time);
-            config.data.datasets[0].data.push(data.value);
+            config.data.datasets[0].data.push(data.value[0]);
+            config.data.datasets[1].data.push(data.value[1]);
+            config.data.datasets[2].data.push((data.value[0] / data.value[1]) * 100);
             lineChart.update();
         }
     });
 </script>
+<a href="http://0.0.0.0:5000/start">start</a>
+<a href="http://0.0.0.0:5000/stop">stop</a>
 </body>
 </html>
