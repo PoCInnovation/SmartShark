@@ -105,7 +105,12 @@
         }
     });
 </script>
-<a href="http://0.0.0.0:5000/start">start</a>
-<a href="http://0.0.0.0:5000/stop">stop</a>
+
+<form action = "http://localhost:5000" method = "post">
+    <p>Use command:</p>
+    <p><input type = "text" name = "cmd" /></p>
+    <p><input type = "submit" value = "submit" /></p>
+ </form>
+
 </body>
 </html>

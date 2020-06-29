@@ -3,7 +3,6 @@ from threading import Thread
 from datetime import datetime
 import json, time, SmartShark.SmSh
 
-
 app = Flask(__name__)
 
 SS = SmartShark.SmSh.SmSh()
@@ -12,14 +11,27 @@ SS = SmartShark.SmSh.SmSh()
 def home():
     return render_template('home.html')
 
-@app.route('/start')
-def start():
-    SS.Status["GO"] = True
-    return render_template('home.html')
-
-@app.route('/stop')
-def stop():
-    SS.Status["GO"] = False
+@app.route('/',methods = ['POST'])
+def login():
+    cmd = request.form['cmd']
+    print(cmd)
+    cmd = cmd.split(" ")
+    if len(cmd) == 0:
+        return render_template('home.html')
+    if cmd[0] == "time":
+        if len(cmd) != 2:
+            return render_template('home.html')
+        if int(cmd[1]) > 0:
+            SS.IA["TIME"] = int(cmd[1])
+    if cmd[0] == "save":
+        if len(cmd) != 2:
+            return render_template('home.html')
+        if bool(cmd[1]) == True or bool(cmd[1]) == False:
+            SS.Status['SAVING'] = bool(cmd[1])
+    if cmd[0] == "start":
+        SS.Status["GO"] = True
+    if cmd[0] == "stop":
+        SS.Status["GO"] = False
     return render_template('home.html')
 
 @app.route('/chart-data')

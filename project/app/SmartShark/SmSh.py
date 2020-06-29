@@ -2,8 +2,8 @@ from threading import Thread
 from subprocess import Popen, PIPE
 import pandas as pd
 import numpy as np
-import tensorflow.keras as tf_keras
 from typing import List
+from tensorflow.python.keras.models import load_model
 from datetime import datetime
 from sklearn.preprocessing import StandardScaler
 import os, signal, time
@@ -36,17 +36,19 @@ class SmSh():
               "PROCESS": False,
               "STOP": False,
               "NEW": False,
-              "GO": False}
+              "GO": False,
+              "SAVING": False}
 
     IA = {"MODEL": 0,
           "PACKETS": [],
           "NUMBER_BAD_PACKETS": 0,
           "NUMBER_PACKETS": 0,
           "PREDICTION": 0,
-          "PACKETS_FLOW": 20}
+          "PACKETS_FLOW": 20,
+          "TIME": 3}
 
     def StartSmSh(self):
-        self.IA["MODEL"] = tf_keras.models.load_model(self.Path["PATH_MODEL"])
+        self.IA["MODEL"] = load_model(self.Path["PATH_MODEL"])
 
         self.CapturingThread = Thread(target=self.Capturing)
         self.ProcessingThread = Thread(target=self.Processing)
@@ -63,10 +65,11 @@ class SmSh():
     def Capturing(self):
         while not self.Status['STOP']:
             if self.Status['CAPTURE'] and self.Status['GO']:
+                print(f"Capturing for {self.IA['TIME']} seconds")
                 open(f"{self.Path['PATH_SAVE']}main.pcap", "w+").close()
                 try:
                     CapturingProcess = Popen(f"tshark -F pcap -i any -w {self.Path['PATH_SAVE']}main.pcap", shell=True, stdout=PIPE, stderr=PIPE)
-                    time.sleep(2)
+                    time.sleep(self.IA['TIME'])
                     while self.Status['PROCESS']:
                         pass
                     os.kill(CapturingProcess.pid, signal.SIGINT)
@@ -81,6 +84,7 @@ class SmSh():
     def Processing(self):
         while not self.Status['STOP']:
             if self.Status['PROCESS'] and self.Status['GO']:
+                print("processing...")
                 os.rename(f"{self.Path['PATH_SAVE']}main.pcap", f"{self.Path['PATH_SAVE']}temp.pcap")
                 self.Status['CAPTURE'] = True
                 open(f"{self.Path['PATH_SAVE']}first.csv", "w").close()
@@ -88,7 +92,12 @@ class SmSh():
                     ApplyCommand(f"tshark -r {self.Path['PATH_SAVE']}temp.pcap -T fields -E separator=, -e frame.len -e frame.time_delta -e ip.proto > {self.Path['PATH_SAVE']}first.csv")
                 except Exception as e:
                     print(e)
-                os.rename(f"{self.Path['PATH_SAVE']}temp.pcap", f"{self.Path['PATH_SAVE'] + datetime.now().strftime('%H:%M:%S')}.pcap")
+                if self.Status['SAVING']:
+                    print("saving...")
+                    os.rename(f"{self.Path['PATH_SAVE']}temp.pcap", f"{self.Path['PATH_SAVE'] + datetime.now().strftime('%H:%M:%S')}.pcap")
+                else:
+                    print("NOT saving...")
+                    os.remove(f"{self.Path['PATH_SAVE']}temp.pcap")
                 open(f"{self.Path['PATH_SAVE']}clean.csv", "w").close()
                 try:
                     ApplyCommand(f"sudo python3.7 {self.Path['PATH_PREPROCESS_SCRIPT']}ds_preprocess.py > {self.Path['PATH_SAVE']}clean.csv")
@@ -100,6 +109,7 @@ class SmSh():
                 except Exception as e:
                     print(e)
 
+                print("check packets...")
                 self.IA["NUMBER_BAD_PACKETS"] = 0
                 self.IA["PACKETS"] = pd.read_csv(f"{self.Path['PATH_SAVE']}clean.csv", names=["deltaTime", "len", "proto", "totalDelta", "totalLen", "averageDelta", "averageLen", "deltaStd", "lenStd"], dtype='float')
                 self.IA["NUMBER_PACKETS"] = len(self.IA["PACKETS"])
