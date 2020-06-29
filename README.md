@@ -34,3 +34,9 @@ You will be able to setup SmSh with a graphical interface on [this page](http://
 - `time` + `sec` (int > 0) -> will set the frequency of observation on your network to `sec` (ex: `time 10` -> this will set the frequency to 10 seconds)
 - `detect` + `%` (int > 0) -> will set the alert system to alert you when `%` of observations have been detected as bad (ex: `detect 10 `-> this will alert you when you have more than 10% of bad observations on your network)
 - `save` + `bool` (True or False) -> this will set the saving system to `bool` (ex: `save True` -> this will save every observation on your network)
+
+## Authors
+
+[Valentin De Matos](https://github.com/Thytu)
+
+[Quentin Fringhian](https://github.com/QuentinFringhian)
