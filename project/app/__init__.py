@@ -7,6 +7,9 @@ app = Flask(__name__)
 
 SS = SmartShark.SmSh.SmSh()
 
+FlaskSave = {"MAX_INFECTED": 3,
+             "ANTI_BRUIT": 0}
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -28,6 +31,11 @@ def login():
             return render_template('home.html')
         if bool(cmd[1]) == True or bool(cmd[1]) == False:
             SS.Status['SAVING'] = bool(cmd[1])
+    if cmd[0] == "detect":
+        if len(cmd) != 2:
+            return render_template('home.html')
+        if int(cmd[1]) > 0:
+            FlaskSave["MAX_INFECTED"] = int(cmd[1])
     if cmd[0] == "start":
         SS.Status["GO"] = True
     if cmd[0] == "stop":
@@ -43,7 +51,7 @@ def chart_data():
                 print(f'bad packets -> {SS.IA["NUMBER_BAD_PACKETS"]} / {SS.IA["NUMBER_PACKETS"]}')
                 json_data = json.dumps({
                     'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'value': [SS.IA["NUMBER_BAD_PACKETS"], SS.IA["NUMBER_PACKETS"]]
+                    'value': [SS.IA["NUMBER_BAD_PACKETS"], SS.IA["NUMBER_PACKETS"], FlaskSave["MAX_INFECTED"], FlaskSave["ANTI_BRUIT"]]
                     })
                 SS.Status['NEW'] = False
                 yield f'data:{json_data}\n\n'

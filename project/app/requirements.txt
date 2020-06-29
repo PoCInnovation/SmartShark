@@ -2,3 +2,4 @@ Flask==1.1.2
 pandas==1.0.4
 tensorflow==2.2.0
 sklearn==0.0
+Keras==2.4.3
