@@ -1,2 +1,4 @@
 flask-project
 __pycache__
+logs
+.ipynb_checkpoints
