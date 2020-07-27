@@ -4,7 +4,7 @@ The SmartShark project is the fruit of the work of Valentin De Matos and Quentin
 
 ## What is SmartShark (SmSh) ?
 
-SmartShark is an IDS (Intrusion Detection Systeme) coupled with some machine learning. The main goal of SmSh is to prevent a network from being attacked by a DDOS (Distributed Denial-of-Service). A DDOS can shut down a whole network and avoiding it could avoid some shutdowns of your website. It uses the machine learning to learn how does a DDOS looks like and learns to be more efficient when facing one.
+SmartShark is an IDS (Intrusion Detection Systeme) coupled with some machine learning. The main goal of SmSh is to prevent a network from being attacked by a DDOS (Distributed Denial-of-Service) or a MITM (Man In The Midle). A DDOS can shut down a whole network and avoiding it could avoid some shutdowns of your website, while a MITM will spy your conection and steal some important data. It uses the machine learning to learn how does a DDOS looks like and learns to be more efficient when facing one, and has an algoritme to detect MITM attack.
 
 ## What tool are we using
 
@@ -14,26 +14,27 @@ Also, to make SmSh easy to use, we are using `Flask` to create a graphical inter
 
 ## How did we get here ?
 
-Soon there will be a time line of our work.
+Soon there will be a time line of our work. [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ## How to use it ?
 
 To use SmSh on your computer:
 
-1) You will need to have `Docker` installed
-2) Clone our repository
-3) Go to the `project` folder
-4) Execute the following command `sudo docker build -t smsh:latest .`
-5) Execute the following command `sudo docker run --net=host --cap-add=NET_ADMIN -e PUID=1000 -e PGID=1000 -d -p 5000:5000 smsh:latest`
+1. You will need to have `Docker` installed
+2. Clone our repository
+3. Go to the `project` folder
+4. Execute the following command `sudo docker build -t smsh:latest .`
+5. Execute the following command `sudo docker run --net=host --cap-add=NET_ADMIN -e PUID=1000 -e PGID=1000 -d -p 5000:5000 smsh:latest`
 
 And here you go ! SmSh is ready to be used on your computer !
 
-You will be able to setup SmSh with a graphical interface on [this page](http://localhost:5000/). From here you will have the access to a graph showing your data according to your network, and SmSh will show you how many bad flows it has detected on your network. You will also have access to a command interpreter where you can insert instructions that will be send to SmSh; here is a list of all commands that you can use:
+You will be able to setup SmSh with a graphical interface on [this page](http://localhost:5000/). From here you will have the access to a graph showing your data according to your network, and SmSh will show you how many bad flows it has detected on your network. You will also have access to a list of button that will be send task to SmSh; here is a list of all commands that you can use:
+
 - `start` -> will make SmSh look into your network and report every bad flow
 - `stop` -> will stop SmSh from looking into your network
-- `time` + `sec` (int > 0) -> will set the frequency of observation on your network to `sec` (ex: `time 10` -> this will set the frequency to 10 seconds)
-- `detect` + `%` (int > 0) -> will set the alert system to alert you when `%` of observations have been detected as bad (ex: `detect 10 `-> this will alert you when you have more than 10% of bad observations on your network)
-- `save` + `bool` (True or False) -> this will set the saving system to `bool` (ex: `save True` -> this will save every observation on your network)
+- `ddos` -> will only check for ddos atack
+- `mitm` -> will only check for mitm atack
+- `ddos&mitm` -> will check on both
 
 ## Authors
 

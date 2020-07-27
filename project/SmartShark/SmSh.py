@@ -6,7 +6,7 @@ from typing import List
 from tensorflow.python.keras.models import load_model
 from datetime import datetime
 from sklearn.preprocessing import StandardScaler
-import os, signal, time
+import os, signal, time, re
 
 def ApplyCommand(Commande: str):
     if not Commande:
@@ -37,7 +37,9 @@ class SmSh():
               "STOP": False,
               "NEW": False,
               "GO": False,
-              "SAVING": False}
+              "SAVING": False,
+              "DDOS": True,
+              "MITM": True}
 
     IA = {"MODEL": 0,
           "PACKETS": [],
@@ -45,7 +47,8 @@ class SmSh():
           "NUMBER_PACKETS": 0,
           "PREDICTION": 0,
           "PACKETS_FLOW": 20,
-          "TIME": 3}
+          "TIME": 3,
+          "SPY": 0}
 
     def StartSmSh(self):
         self.IA["MODEL"] = load_model(self.Path["PATH_MODEL"])
@@ -87,50 +90,128 @@ class SmSh():
                 print("processing...")
                 os.rename(f"{self.Path['PATH_SAVE']}main.pcap", f"{self.Path['PATH_SAVE']}temp.pcap")
                 self.Status['CAPTURE'] = True
-                open(f"{self.Path['PATH_SAVE']}first.csv", "w").close()
-                try:
-                    ApplyCommand(f"tshark -r {self.Path['PATH_SAVE']}temp.pcap -T fields -E separator=, -e frame.len -e frame.time_delta -e ip.proto > {self.Path['PATH_SAVE']}first.csv")
-                except Exception as e:
-                    print(e)
+
+                if self.Status['DDOS']:
+                    try:
+                        self.DDoSCheck()
+                    except Exception as e:
+                        print(e)
+                        self.Status['PROCESS'] = False
+                        self.Status['NEW'] = True
+                        continue
+
+                if self.Status['MITM']:
+                    try:
+                        print("check !")
+                        self.mitmCheck()
+                        print("done !")
+                        print(self.IA["SPY"])
+                    except Exception as e:
+                        print(e)
+                        self.Status['PROCESS'] = False
+                        self.Status['NEW'] = True
+                        continue
+
                 if self.Status['SAVING']:
                     print("saving...")
                     os.rename(f"{self.Path['PATH_SAVE']}temp.pcap", f"{self.Path['PATH_SAVE'] + datetime.now().strftime('%H:%M:%S')}.pcap")
                 else:
                     print("NOT saving...")
                     os.remove(f"{self.Path['PATH_SAVE']}temp.pcap")
-                open(f"{self.Path['PATH_SAVE']}clean.csv", "w").close()
-                try:
-                    ApplyCommand(f"sudo python3.7 {self.Path['PATH_PREPROCESS_SCRIPT']}ds_preprocess.py > {self.Path['PATH_SAVE']}clean.csv")
-                except Exception as e:
-                    print(e)
-                os.remove(f"{self.Path['PATH_SAVE']}first.csv")
-                try:
-                    RemoveFirstLine(f"{self.Path['PATH_SAVE']}clean.csv")
-                except Exception as e:
-                    print(e)
-
-                print("check packets...")
-                self.IA["NUMBER_BAD_PACKETS"] = 0
-                self.IA["PACKETS"] = pd.read_csv(f"{self.Path['PATH_SAVE']}clean.csv", names=["deltaTime", "len", "proto", "totalDelta", "totalLen", "averageDelta", "averageLen", "deltaStd", "lenStd"], dtype='float')
-                self.IA["NUMBER_PACKETS"] = len(self.IA["PACKETS"])
-                if len(self.IA["PACKETS"]) > 0:
-                    scaler = StandardScaler()
-                    self.IA["PACKETS"] = scaler.fit_transform(self.IA["PACKETS"])
-                    result = []
-                    tmp = []
-                    for index, line in enumerate(self.IA["PACKETS"]):
-                        tmp.append(line)
-                        if index % self.IA["PACKETS_FLOW"] == self.IA["PACKETS_FLOW"] - 1:
-                            result.append(tmp)
-                            tmp = []
-                    result = np.array(result)
-                    self.IA["PREDICTION"] = self.IA["MODEL"].predict(result)
-                    for i in range(len(result)):
-                        if self.IA["PREDICTION"][i][1] > 0.5:
-                            self.IA["NUMBER_BAD_PACKETS"] = self.IA["NUMBER_BAD_PACKETS"] + 1
-                os.remove(f"{self.Path['PATH_SAVE']}clean.csv")
 
                 self.Status['PROCESS'] = False
                 self.Status['NEW'] = True
 
             time.sleep(1)
+
+    def mitmCheck(self):
+        self.IA["SPY"] = 0
+        arp_table = {}
+        try:
+            with open(f"{self.Path['PATH_SAVE']}arp_table", "r") as f:
+                for ligne in f:
+                    arp_table[re.findall("(.+?);", ligne)[0]] = re.findall(";(.+?)\n", ligne)[0]
+        except:
+            pass
+
+        try:
+            ApplyCommand(f"sudo tshark -r {self.Path['PATH_SAVE']}temp.pcap -Y arp > {self.Path['PATH_SAVE']}log")
+        except Exception as e:
+            print(e)
+            self.Status['PROCESS'] = False
+            self.Status['NEW'] = True
+            return
+
+        with open(f"{self.Path['PATH_SAVE']}log", "r") as f:
+            for ligne in f:
+                if re.findall("Who has", ligne):
+                    last_l = ligne
+                    last_sp = re.findall("Tell (.+?)\n", ligne)[0]
+                elif re.findall("is at", ligne) and re.findall("ARP .+? (.+?) ", ligne)[0] in arp_table:
+                    if arp_table[re.findall("ARP .+? (.+?) ", ligne)[0]] != re.findall("is at (.+?)\n", ligne)[0]:
+                        self.IA["SPY"] += 1
+                else:
+                    with open(f"{self.Path['PATH_SAVE']}arp_table", "a") as ARP:
+                        ARP.write(re.findall("ARP .+? (.+?) ", ligne)[0])
+                        ARP.write(";")
+                        ARP.write(re.findall("is at (.+?)\n", ligne)[0])
+                        ARP.write("\n")
+                        arp_table[re.findall("ARP .+? (.+?) ", ligne)[0]] = re.findall("is at (.+?)\n", ligne)[0]
+        return
+
+
+    def DDoSCheck(self):
+        open(f"{self.Path['PATH_SAVE']}first.csv", "w").close()
+        try:
+            ApplyCommand(f"tshark -r {self.Path['PATH_SAVE']}temp.pcap -T fields -E separator=, -e frame.len -e frame.time_delta -e ip.proto > {self.Path['PATH_SAVE']}first.csv")
+        except Exception as e:
+            print(e)
+            self.Status['PROCESS'] = False
+            self.Status['NEW'] = True
+            return
+
+        open(f"{self.Path['PATH_SAVE']}clean.csv", "w").close()
+
+        try:
+            ApplyCommand(f"sudo python3 {self.Path['PATH_PREPROCESS_SCRIPT']}ds_preprocess.py > {self.Path['PATH_SAVE']}clean.csv")
+        except Exception as e:
+            print(e)
+            self.Status['PROCESS'] = False
+            self.Status['NEW'] = True
+            return
+
+        os.remove(f"{self.Path['PATH_SAVE']}first.csv")
+        try:
+            RemoveFirstLine(f"{self.Path['PATH_SAVE']}clean.csv")
+        except Exception as e:
+            print(e)
+            self.Status['PROCESS'] = False
+            self.Status['NEW'] = True
+            return
+
+        print("check packets...")
+        self.IA["NUMBER_BAD_PACKETS"] = 0
+        self.IA["PACKETS"] = pd.read_csv(f"{self.Path['PATH_SAVE']}clean.csv", names=["deltaTime", "len", "proto", "totalDelta", "totalLen", "averageDelta", "averageLen", "deltaStd", "lenStd"], dtype='float')
+        self.IA["NUMBER_PACKETS"] = len(self.IA["PACKETS"])
+        if len(self.IA["PACKETS"]) > 0:
+            scaler = StandardScaler()
+            self.IA["PACKETS"] = scaler.fit_transform(self.IA["PACKETS"])
+            result = []
+            tmp = []
+            for index, line in enumerate(self.IA["PACKETS"]):
+                tmp.append(line)
+                if index % self.IA["PACKETS_FLOW"] == self.IA["PACKETS_FLOW"] - 1:
+                    result.append(tmp)
+                    tmp = []
+            result = np.array(result)
+            try:
+                self.IA["PREDICTION"] = self.IA["MODEL"].predict(result)
+            except Exception as e:
+                print(e)
+                return
+            for i in range(len(result)):
+                if self.IA["PREDICTION"][i][1] > 0.5:
+                    self.IA["NUMBER_BAD_PACKETS"] = self.IA["NUMBER_BAD_PACKETS"] + 1
+
+        os.remove(f"{self.Path['PATH_SAVE']}clean.csv")
+        return

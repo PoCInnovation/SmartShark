@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 from threading import Thread
 from datetime import datetime
 import json, time, SmartShark.SmSh
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 SS = SmartShark.SmSh.SmSh()
 
-FlaskSave = {"MAX_INFECTED": 3,
+FlaskSave = {"MAX_INFECTED": 10,
              "ANTI_BRUIT": 0}
 
 @app.route('/')
@@ -15,7 +15,9 @@ def home():
     return render_template('home.html')
 
 @app.route('/',methods = ['POST'])
-def login():
+def process():
+    cmd = request.form['cmd']
+
     cmd = request.form['cmd']
     print(cmd)
     cmd = cmd.split(" ")
@@ -40,6 +42,15 @@ def login():
         SS.Status["GO"] = True
     if cmd[0] == "stop":
         SS.Status["GO"] = False
+    if cmd[0] == "ddos":
+        SS.Status["DDOS"] = True
+        SS.Status["MITM"] = False
+    if cmd[0] == "ddos&mitm":
+        SS.Status["DDOS"] = True
+        SS.Status["MITM"] = True
+    if cmd[0] == "mitm":
+        SS.Status["DDOS"] = False
+        SS.Status["MITM"] = True
     return render_template('home.html')
 
 @app.route('/chart-data')
@@ -48,10 +59,9 @@ def chart_data():
         json_data = {}
         while True:
             if SS.Status['NEW']:
-                print(f'bad packets -> {SS.IA["NUMBER_BAD_PACKETS"]} / {SS.IA["NUMBER_PACKETS"]}')
                 json_data = json.dumps({
                     'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'value': [SS.IA["NUMBER_BAD_PACKETS"], SS.IA["NUMBER_PACKETS"], FlaskSave["MAX_INFECTED"], FlaskSave["ANTI_BRUIT"]]
+                    'value': [SS.IA["NUMBER_BAD_PACKETS"], SS.IA["NUMBER_PACKETS"], FlaskSave["MAX_INFECTED"], FlaskSave["ANTI_BRUIT"], SS.IA["SPY"]]
                     })
                 SS.Status['NEW'] = False
                 yield f'data:{json_data}\n\n'

@@ -1,3 +1,51 @@
+body {
+  background-color: lightblue;
+}
+
+.logo {
+  position: fixed;
+  z-index: -1;
+
+  width: 20%;
+  height: auto;
+
+  top: 5%;
+  right: 5%;
+  background-attachment: fixed;
+}
+
+.graph {
+  display: flex;
+
+  justify-content: center;
+}
+
+.container {
+  color: darkblue;
+  margin-top: 5%;
+}
+
+.card-body {
+  background-color: rgb(120, 189, 245);
+}
+
+.cmd {
+  display: flex;
+
+  justify-content: center;
+  flex-direction: row;
+
+  margin: 2%;
+  text-align: center;
+  color: rgb(23, 71, 202);
+}
+
 h1 {
-    font-size: 2em; color: green; text-align: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+
+  font-weight: 900;
+  font-size: 50px;
+  line-height: 59px;
 }
