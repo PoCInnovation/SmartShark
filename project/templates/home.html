@@ -1,35 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>SmSh</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container">
-    <div class="row">
-        <div class="col-12">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="static/main.css" />
+  </head>
+
+  <body>
+    <img class="logo" src="static/images/logo.png" alt="Logo SmSh" />
+    <h1>Smart Shark</h1>
+
+    <div class="graph">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
             <div class="card">
-                <div class="card-body">
-                    <canvas id="canvas"></canvas>
-                </div>
+              <div class="card-body">
+                <canvas id="ddos_context"></canvas>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <div class="card">
+              <div class="card-body">
+                <canvas id="percent"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <div class="cmd">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 
-<script src="static/main.js"></script>
+      <script src="static/main.js"></script>
 
-<form classname="input" action = "http://localhost:5000" method = "post">
-    <p>Use command:</p>
-    <p><input type = "text" name = "cmd" /></p>
-    <p><input type = "submit" value = "submit" /></p>
- </form>
+      <div class="input1">
+        <form>
+          <button value="start" name="cmd" id="cmd_1">START</button>
+        </form>
+      </div>
 
-</body>
+      <div class="input2">
+        <form>
+          <button value="stop" name="cmd_2" id="cmd_2">STOP</button>
+        </form>
+      </div>
+
+      <div class="input3">
+        <form>
+          <button value="ddos" name="cmd" id="cmd_3">DDOS</button>
+        </form>
+      </div>
+
+      <div class="input4">
+        <form>
+          <button value="mitm" name="cmd" id="cmd_4">MITM</button>
+        </form>
+      </div>
+
+      <div class="input5">
+        <form>
+          <button value="ddos&mitm" name="cmd" id="cmd_5">DDOS & MITM</button>
+        </form>
+      </div>
+    </div>
+  </body>
 </html>
