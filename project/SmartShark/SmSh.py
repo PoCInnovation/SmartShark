@@ -53,6 +53,8 @@ class SmSh():
     def StartSmSh(self):
         self.IA["MODEL"] = load_model(self.Path["PATH_MODEL"])
 
+        os.makedirs(self.Path['PATH_SAVE'], exist_ok=True)
+
         self.CapturingThread = Thread(target=self.Capturing)
         self.ProcessingThread = Thread(target=self.Processing)
 
