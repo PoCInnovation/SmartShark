@@ -55,6 +55,7 @@ The second graph display only the suspicious packets (in percentage) to let you 
 <img src="./.doc/SmSh-secondDashboard.png" width="70%"/>
 
 Lastly, you have access to five buttons letting you parameter SmartShark exactly as you need to.<br>
+<img src="./.doc/SmSh-mainButtons.png" width="70%"/>
 
 Here is the list of all available commands:
 
