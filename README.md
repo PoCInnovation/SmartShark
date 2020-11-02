@@ -8,7 +8,7 @@ SmartShark is an IDS (Intrusion Detection Systeme) base on machine learning.<br>
 The main goal of SmSh is to prevent a network from being attacked by a DDoS (Distributed Denial-of-Service) or a MITM (Man In The Midle).<br>
 A DDoS can shut down a whole network, avoiding it will protect your services (website/API/app/etc.), while a MITM will spy your connection and steal important data.<br>
 SmartShark uses machine learning to learn how does a DDoS looks like and learns to be more efficient when facing one.<br>
-¨To detect MITM Smsh has an algorithm to detect ARP table attacks.
+To detect MITM Smsh has an algorithm to detect ARP table attacks.
 
 ## What tool are we using
 
