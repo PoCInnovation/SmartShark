@@ -17,7 +17,7 @@ We are using `tshark` (Wireshark in CLI) to catch all the traffic that happens o
 Once the traffic is captured we pass it through our AI to detect suspicious packets and stopping it from harming the network.<br>
 
 To build our AI we used `TensorFlow` which is a package use in machine learning to create neural networks.<br>
-In our case we create our own neural network compose by two layers of LSTM and  two layers of Fully connected neurons.<br>
+In our case, our neural network is composed of two layers of LSTM and two layers of fully connected neurons.<br>
 `LSTM(9)`->
 `Dropout(0.3)`->
 `LSTM(9)`->
@@ -26,8 +26,8 @@ In our case we create our own neural network compose by two layers of LSTM and  
 `Flatten()`->
 `Dense(2)`<br>
 
-To train our model we need a huge amount of data, for more information, please checkout [this link](https://github.com/PoCInnovation/SmartShark/tree/master/datasets).<br>
-Finally to test our model in real condition we attack our own network with DDoS attack and ARP table for the MITM.
+To train our model we needed a huge amount of data, for more information, please checkout [this link](https://github.com/PoCInnovation/SmartShark/tree/master/datasets).<br>
+Finally to test our model in real condition we attack our own network with  multiple types of DDoS attacks and an ARP table attack.
 
 Also, to make SmSh easy to use, we are using `Flask` to create a graphical interface for the user, making our project more accessible to other.<br>
 We are using `Docker` as well, making the installation of SmSh very simple for anyone, because you don't need to download all of SmSh's dependencies yourself.
