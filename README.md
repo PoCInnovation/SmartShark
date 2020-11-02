@@ -4,7 +4,11 @@ The SmartShark project is the fruit of the work of Valentin De Matos and Quentin
 
 ## What is SmartShark (SmSh) ?
 
-SmartShark is an IDS (Intrusion Detection Systeme) coupled with some machine learning. The main goal of SmSh is to prevent a network from being attacked by a DDOS (Distributed Denial-of-Service) or a MITM (Man In The Midle). A DDOS can shut down a whole network and avoiding it could avoid some shutdowns of your website, while a MITM will spy your conection and steal some important data. It uses the machine learning to learn how does a DDOS looks like and learns to be more efficient when facing one, and has an algoritme to detect MITM attack.
+SmartShark is an IDS (Intrusion Detection Systeme) base on machine learning.<br>
+The main goal of SmSh is to prevent a network from being attacked by a DDoS (Distributed Denial-of-Service) or a MITM (Man In The Midle).<br>
+A DDoS can shut down a whole network, avoiding it will protect your services (website/API/app/etc.), while a MITM will spy your connection and steal important data.<br>
+SmartShark uses machine learning to learn how does a DDoS looks like and learns to be more efficient when facing one.<br>
+¨To detect MITM Smsh has an algorithm to detect ARP table attacks.
 
 ## What tool are we using
 
@@ -22,7 +26,7 @@ In our case we create our own neural network compose by two layers of LSTM and  
 `Dense(2)`<br>
 
 To train our model we need a huge amount of data, for more information, please checkout [this link](https://github.com/PoCInnovation/SmartShark/tree/master/datasets).<br>
-Finally to test our model in real condition we attack our own network with DDoS attack and ARP table for the MIT.
+Finally to test our model in real condition we attack our own network with DDoS attack and ARP table for the MITM.
 
 Also, to make SmSh easy to use, we are using `Flask` to create a graphical interface for the user, making our project more accessible to other.<br>
 We are using `Docker` as well, making the installation of SmSh very simple for anyone, because you don't need to download all of SmSh's dependencies yourself.
@@ -44,7 +48,7 @@ You will be able to use SmSh with a graphical interface on [this page](http://lo
 SmartShark'GUI is composed by three elements.
 
 The first one is your main graph which display all the stats of your network.
-You can see in thise exemple in green the amount of packet in your network, in red the amout of suspicious packet (DDoS) and in blue the amount of potential MIT packet.<br>
+You can see in thise exemple in green the amount of packet in your network, in red the amout of suspicious packet (DDoS) and in blue the amount of potential MITM packet.<br>
 <img src="./.doc/SmSh-mainDashboard.png" width="70%"/>
 
 The second graph display only the suspicious packets (in percentage) to let you analyze more precisely your network.<br>
