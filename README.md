@@ -1,6 +1,7 @@
 # SmartShark - An IDS with some Machine Learning
 
-The SmartShark project is the fruit of the work of Valentin De Matos and Quentin Fringhian, two Epitech studients managed by the Poc assosiation. The project started in April 2020 and is still in progress.
+The SmartShark project is the fruit of the work of Valentin De Matos and Quentin Fringhian, two members of the student R&D center PoC Innovation.<br>
+The project started in April 2020 and finished in August 2020.
 
 ## What is SmartShark (SmSh) ?
 
