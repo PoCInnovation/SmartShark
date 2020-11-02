@@ -8,13 +8,24 @@ SmartShark is an IDS (Intrusion Detection Systeme) coupled with some machine lea
 
 ## What tool are we using
 
-We are using the `Wireshark` technology to catch all the trafic that happens on the network to, hopefully, try to detect some suspicious traffic and stopping it from harming the network. For the machine learning we are using the `TensorFlow` (2.0) tool, it is a powerfull add for our project because it manage to create a neuronal network easily and thanks to that we can detect a DDOS more efficiently.
+We are using `tshark` (Wireshark in CLI) to catch all the traffic that happens on the network.
+Once the traffic is captured we pass it through our AI to detect suspicious packets and stopping it from harming the network.<br>
 
-Also, to make SmSh easy to use, we are using `Flask` to create a graphical interface for the user, making our project more accessible to other. We are using `Docker` as well, making the installation of SmSh very easy for the user, because then the user doesn't need to download all of SmSh's dependencies yourself.
+To build our AI we used `TensorFlow` which is a package use in machine learning to create neural networks.<br>
+In our case we create our own neural network compose by two layers of LSTM and  two layers of Fully connected neurons.<br>
+`LSTM(9)`->
+`Dropout(0.3)`->
+`LSTM(9)`->
+`Dropout(0.3)`->
+`Dense(9)`->
+`Flatten()`->
+`Dense(2)`<br>
 
-## How did we get here ?
+To train our model we need a huge amount of data, for more information, please checkout [this link](https://github.com/PoCInnovation/SmartShark/tree/master/datasets).<br>
+Finally to test our model in real condition we attack our own network with DDoS attack and ARP table for the MIT.
 
-Soon there will be a time line of our work. [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+Also, to make SmSh easy to use, we are using `Flask` to create a graphical interface for the user, making our project more accessible to other.<br>
+We are using `Docker` as well, making the installation of SmSh very simple for anyone, because you don't need to download all of SmSh's dependencies yourself.
 
 ## How to use it ?
 
@@ -28,7 +39,20 @@ To use SmSh on your computer:
 
 And here you go ! SmSh is ready to be used on your computer !
 
-You will be able to setup SmSh with a graphical interface on [this page](http://localhost:5000/). From here you will have the access to a graph showing your data according to your network, and SmSh will show you how many bad flows it has detected on your network. You will also have access to a list of button that will be send task to SmSh; here is a list of all commands that you can use:
+You will be able to use SmSh with a graphical interface on [this page](http://localhost:5000/).
+
+SmartShark'GUI is composed by three elements.
+
+The first one is your main graph which display all the stats of your network.
+You can see in thise exemple in green the amount of packet in your network, in red the amout of suspicious packet (DDoS) and in blue the amount of potential MIT packet.<br>
+<img src="./.doc/SmSh-mainDashboard.png" width="70%"/>
+
+The second graph display only the suspicious packets (in percentage) to let you analyze more precisely your network.<br>
+<img src="./.doc/SmSh-secondDashboard.png" width="70%"/>
+
+Lastly, you have access to five buttons letting you parameter SmartShark exactly as you need to.<br>
+
+Here is the list of all available commands:
 
 - `start` -> will make SmSh look into your network and report every bad flow
 - `stop` -> will stop SmSh from looking into your network
@@ -36,8 +60,13 @@ You will be able to setup SmSh with a graphical interface on [this page](http://
 - `mitm` -> will only check for mitm atack
 - `ddos&mitm` -> will check on both
 
+<center>
+
 ## Authors
 
 [Valentin De Matos](https://github.com/Thytu)
 
 [Quentin Fringhian](https://github.com/QuentinFringhian)
+
+<img src="./project/static/images/logo.png" height="200" width="200" style="text-align: center"/>
+<center/>
